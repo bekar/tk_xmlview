@@ -10,9 +10,6 @@ class xmlview():
         self.txtwig=txt_wig
         self.txtwig.tag_config("tags", foreground="purple")
         self.txtwig.tag_config("bold", font=[ def_font[0], def_font[1], "bold"])
-        self.txtwig.tag_config(3, font=[ def_font[0], def_font[1], "italic"])
-        self.txtwig.tag_config(4, underline=TRUE)
-        self.txtwig.tag_config(9, overstrike=TRUE)
         if string: self.parser(string)
 
     def de_code(self, code, b, e):
@@ -45,5 +42,5 @@ if __name__ == "__main__" :
     string=open(sys.argv[1]).read()
     xview=xmlview(text, string)
     text.pack(expand=YES, fill=BOTH)
-    root.bind('<Key-Escape>', quit)
+    root.bind('<Key-Escape>', lambda event: quit())
     root.mainloop()
