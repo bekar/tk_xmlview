@@ -4,12 +4,12 @@ import os, sys
 import tkinter as tk
 import tkinter.font as tkFont
 
-class xmlview():
+class XMLView():
     def __init__(self, txt_wig, string=None):
         self.txtwig=txt_wig
 
-        name = txt_wig['font']
-        b = tkFont.nametofont(name).copy()
+        font_name = txt_wig['font']
+        b = tkFont.nametofont(font_name).copy()
         b.config(weight="bold")
 
         txt_wig.tag_config("tags", foreground="purple", font=b)
@@ -26,16 +26,20 @@ class xmlview():
         # print(code, self.txtwig.get(beg, end), beg, end)
         return end
 
-    def parser(self, string):
-        self.txtwig.delete('1.0', "end")
-        beg = end = [ 0, 0 ]
-        self.j = 1; self.i = 0
+    def parser(self, string, index=None):
+        if not index:
+            index = self.txtwig.index("current")
+
+        # print("parser", index)
+        self.j, self.i = [ int(i) for i in index.split('.') ]
+        self.txtwig.mark_set("insert", index)
+        beg = end = [ self.j, self.i ]
         in_tag_flag = False
         tag_name_flag = False
         in_quote = False
         quote = None
         for char in string:
-            self.txtwig.insert("end", char)
+            self.txtwig.insert('insert', char)
             self.i += 1
             if   char == '<':
                 beg = [self.j, self.i]
@@ -80,8 +84,11 @@ class xmlview():
                 self.j += 1; self.i = 0
                 beg = [self.j, self.i]
 
+        return self.j, self.i
+
 def handle(event):
     root.title(event.data)
+    engine.txtwig.delete('1.0', "end")
     engine.parser(open(event.data).read())
 
 if __name__ == "__main__" :
@@ -89,12 +96,12 @@ if __name__ == "__main__" :
         print("Argument(s) Missing", file=sys.stderr); exit(1);
 
     root = tk.Tk()
-    root.bind("<Key-Escape>", lambda event: quit())
+    root.bind("<Key-Escape>", lambda event: root.quit())
 
     def_font = tkFont.Font(family="DejaVuSansMono", size=11)
     text = tk.Text(root, font=def_font)
     string = open(sys.argv[1]).read()
-    engine = xmlview(text, string)
+    engine = XMLView(text, string)
     text.pack(expand=True, fill="both")
 
     try:
