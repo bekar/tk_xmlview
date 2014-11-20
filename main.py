@@ -6,9 +6,9 @@ import tkinter.font as tkFont
 
 class XMLView():
     def __init__(self, txtwig=None, string=None):
-        if txtwig or string:
+        if txtwig and string:
             self.loadTags(txtwig)
-            self.parser(string)
+            self.parser(txtwig, string)
 
     def loadTags(self, txtwig):
         self.txtwig = txtwig
@@ -94,7 +94,7 @@ class XMLView():
 def handle(event):
     root.title(event.data)
     engine.txtwig.delete('1.0', "end")
-    engine.parser(open(event.data).read())
+    engine.parser(engine.txtwig, open(event.data).read())
 
 if __name__ == "__main__" :
     if len(sys.argv)<2:
